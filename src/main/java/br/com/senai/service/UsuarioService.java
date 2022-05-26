@@ -1,11 +1,13 @@
 package br.com.senai.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.senai.dto.UsuarioDTO;
 import br.com.senai.exception.EmailException;
 import br.com.senai.model.Usuario;
 import br.com.senai.repository.UsuarioRespository;
@@ -19,8 +21,9 @@ public class UsuarioService {
     @Autowired 
     BCryptPasswordEncoder passwordEncoder;
 
-    public List<Usuario> listar(){
-        return usuarioRespository.findAll();
+    public List<UsuarioDTO> listar(){
+        List<Usuario> usuarios = usuarioRespository.findAll();
+        return usuarios.stream().map(user -> new UsuarioDTO(user)).collect(Collectors.toList());
     }
 
     public Usuario inserir(Usuario user){

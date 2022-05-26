@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.senai.dto.UsuarioDTO;
+import br.com.senai.dto.UsuarioInsertDTO;
 import br.com.senai.exception.EmailException;
 import br.com.senai.model.Usuario;
 import br.com.senai.repository.UsuarioRespository;
@@ -26,12 +27,15 @@ public class UsuarioService {
         return usuarios.stream().map(user -> new UsuarioDTO(user)).collect(Collectors.toList());
     }
 
-    public Usuario inserir(Usuario user){
-        Usuario usuario = usuarioRespository.findByEmail(user.getEmail());
-        if(usuario != null){
+    public UsuarioDTO inserir(UsuarioInsertDTO userInsertDTO){
+        if(usuarioRespository.findByEmail(userInsertDTO.getEmail()) != null){
             throw new EmailException("Email já cadastrado!");
         }
-        user.setSenha(passwordEncoder.encode(user.getSenha()));
-        return usuarioRespository.save(user);
+        Usuario user = new Usuario();
+        user.setNome(userInsertDTO.getNome());
+        user.setEmail(userInsertDTO.getEmail());
+        user.setSenha(passwordEncoder.encode(userInsertDTO.getSenha()));
+        user = usuarioRespository.save(user);
+        return new UsuarioDTO(user);
     }
 }

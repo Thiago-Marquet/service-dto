@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.senai.dto.UsuarioDTO;
+import br.com.senai.dto.UsuarioInsertDTO;
 import br.com.senai.exception.EmailException;
-import br.com.senai.model.Usuario;
 import br.com.senai.service.UsuarioService;
 
 @RestController
@@ -31,12 +31,12 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> inserir(@RequestBody Usuario user){
+    public ResponseEntity<Object> inserir(@RequestBody UsuarioInsertDTO userInsertDTO){
         try {
-            user = usuarioService.inserir(user);
-            URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId())
-                .toUri();
-            return ResponseEntity.created(uri).body(user);
+            UsuarioDTO userDTO = usuarioService.inserir(userInsertDTO);
+            URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+            .buildAndExpand(userDTO.getId()).toUri();
+            return ResponseEntity.created(uri).body(userDTO);
         } catch (EmailException e) {
             return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
